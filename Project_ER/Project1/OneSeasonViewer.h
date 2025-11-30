@@ -1,2 +1,1 @@
-#pragma once
-int oneseasonview();
+﻿int oneseasonview();

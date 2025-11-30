@@ -27,6 +27,12 @@
     <ClCompile Include="cJSON.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="multipleseason.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="getuser.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="etc.h">
@@ -38,5 +44,16 @@
     <ClInclude Include="cJSON.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="multipleseason.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="getuser.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="subjects.json">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

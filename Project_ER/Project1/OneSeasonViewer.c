@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,88 +6,98 @@
 #include "cJSON.h"
 #include "OneSeasonViewer.h"
 #define API_KEY  "G8qG8ACBH5RHr8j2H0kt866wdH8PSUV8kUdg4Ns3"
-#define BUFFER_SIZE 800000 //ÃÖ´ëÄ¡±îÁö ´ãÀ»¼ö ÀÖµµ·Ï ÀÏ´Ü ¸¹Àº ¸Ş¸ğ¸® ÇÒ´ç ±Ùµ¥ ¿Ö 800000ÀÌ µÇ°í 8884844°¡ ¾ÈµÇÁö?
+#define BUFFER_SIZE 800000 //ìµœëŒ€ì¹˜ê¹Œì§€ ë‹´ì„ìˆ˜ ìˆë„ë¡ ì¼ë‹¨ ë§ì€ ë©”ëª¨ë¦¬ í• ë‹¹ ê·¼ë° ì™œ 800000ì´ ë˜ê³  8884844ê°€ ì•ˆë˜ì§€?
 
 
 int oneseasonview() {
-	printf("ÇöÁ¦´Â ½ÃÁğ9(¸¶Ã÷¸®) ÀÔ´Ï´Ù.\nÁ¶È¸ÇÒ·Á´Â ½ÃÁğÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä : ");
+	printf("í˜„ì œëŠ” ì‹œì¦Œ9(ë§ˆì¸ ë¦¬) ì…ë‹ˆë‹¤.\nì¡°íšŒí• ë ¤ëŠ” ì‹œì¦Œì„ ì…ë ¥í•´ì£¼ì„¸ìš” : ");
 	int season;
 	scanf("%d", &season); 
-	season = season * 2 + 17; //½ÃÁğ -> API¿ë ½ÃÁğ ÄÚµå º¯È¯
-    SetConsoleOutputCP(65001); //API °á°ú Ãâ·ÂÀ» À§ÇØ UTF-8·Î ÀÎÄÚµù º¯°æ
+	season = season * 2 + 17; //ì‹œì¦Œ -> APIìš© ì‹œì¦Œ ì½”ë“œ ë³€í™˜
+      //API ê²°ê³¼ ì¶œë ¥ì„ ìœ„í•´ UTF-8ë¡œ ì¸ì½”ë”© ë³€ê²½
 
-	FILE* ppopen; //Ãâ·Â ½ºÆ®¸²¿ë ÆÄÀÌÇÁ
+	FILE* ppopen; //ì¶œë ¥ ìŠ¤íŠ¸ë¦¼ìš© íŒŒì´í”„
 
 
-	size_t maxDataSize = BUFFER_SIZE; //ÃÖ´ëÄ¡±îÁö ´ãÀ»¼ö ÀÖµµ·Ï ÀÏ´Ü ¸¹Àº ¸Ş¸ğ¸® ÇÒ´ç
-	char* jsonData = (char*)malloc(maxDataSize); //JSON µ¥ÀÌÅÍ¸¦ ´ãÀ»¼ö ÀÖµµ·Ï À¯µ¿ÀûÀÎ ¸Ş¸ğ¸® ÇÒ´ç
-	char buffer[BUFFER_SIZE]; //ÀÓ½Ã ¹öÆÛ
+	size_t maxDataSize = BUFFER_SIZE; //ìµœëŒ€ì¹˜ê¹Œì§€ ë‹´ì„ìˆ˜ ìˆë„ë¡ ì¼ë‹¨ ë§ì€ ë©”ëª¨ë¦¬ í• ë‹¹
+	char* jsonData = (char*)malloc(maxDataSize); //JSON ë°ì´í„°ë¥¼ ë‹´ì„ìˆ˜ ìˆë„ë¡ ìœ ë™ì ì¸ ë©”ëª¨ë¦¬ í• ë‹¹
+	char buffer[BUFFER_SIZE]; //ì„ì‹œ ë²„í¼
 
-    if (jsonData == NULL) { // ¾Æ¹« ÀÀ´äµµ ¹ŞÁö ¸øÇßÀ»‹š
-        printf("Data getting failed\n");
-		SetConsoleOutputCP(949); //¿ø·¡ ÀÎÄÚµùÀ¸·Î º¹±¸
+
+
+    char command[200000]; //ì¼ë‹¨ ë„£ì„ìˆ˜ ìˆë„ë¡ ìš©ëŸ‰ì„ í¬ê²Œ í•œ ë¹ˆ ê»ë°ê¸° ì¤€ë¹„
+    snprintf(command, sizeof(command), "curl -s -X GET \"https://open-api.bser.io/v1/rank/top/%d/3\" -H \"accept: application/json\" -H \"x-api-key: %s\" 2>&1", season,API_KEY); //ë¹ˆê»ë°ê¸°ì— í…œí”Œë¦¿ì„ ë°”íƒ•ìœ¼ë¡œ ì‹œì¦Œ ë°ì´í„° ë„£ê¸°
+	printf("Connecting to API...\n"); //API ì—°ê²° ì‹œë„
+	fflush(stdout); //ë²„í¼ ë¹„ìš°ê¸°
+
+	ppopen = _popen(command, "r"); //ëª…ë ¹ì–´ ì‹¤í–‰
+	if (ppopen == NULL) { //ëª…ë ¹ì–´ ì‹¤í–‰ ì‹¤íŒ¨ì‹œ
+		perror("popen failed"); //ì˜¤ë¥˜ ì¶œë ¥
+		free(jsonData); //ë©”ëª¨ë¦¬ í•´ì œ
+		SetConsoleOutputCP(949); //ì›ë˜ ì¸ì½”ë”©ìœ¼ë¡œ ë³µêµ¬
         return 1;
     }
 
+	int location = 0; //í˜„ì¬ê¹Œì§€ ì½ì€ ë°ì´í„° ê¸¸ì´
+	while (fgets(buffer, sizeof(buffer), ppopen) != NULL) { //ì¶œë ¥ ìŠ¤íŠ¸ë¦¼ì—ì„œ í•œ ì¤„ì”© ì½ê¸°
+		int bufferlength = strlen(buffer); //ì½ì€ ë°ì´í„° ê¸¸ì´
 
-    char command[200000]; //ÀÏ´Ü ³ÖÀ»¼ö ÀÖµµ·Ï ¿ë·®À» Å©°Ô ÇÑ ºó ²®µ¥±â ÁØºñ
-    snprintf(command, sizeof(command), "curl -s -X GET \"https://open-api.bser.io/v1/rank/top/%d/3\" -H \"accept: application/json\" -H \"x-api-key: %s\" 2>&1", season,API_KEY); //ºó²®µ¥±â¿¡ ÅÛÇÃ¸´À» ¹ÙÅÁÀ¸·Î ½ÃÁğ µ¥ÀÌÅÍ ³Ö±â
-	printf("Connecting to API...\n"); //API ¿¬°á ½Ãµµ
-	fflush(stdout); //¹öÆÛ ºñ¿ì±â
-
-	ppopen = _popen(command, "r"); //¸í·É¾î ½ÇÇà
-	if (ppopen == NULL) { //¸í·É¾î ½ÇÇà ½ÇÆĞ½Ã
-		perror("popen failed"); //¿À·ù Ãâ·Â
-		free(jsonData); //¸Ş¸ğ¸® ÇØÁ¦
-		SetConsoleOutputCP(949); //¿ø·¡ ÀÎÄÚµùÀ¸·Î º¹±¸
-        return 1;
-    }
-
-	int location = 0; //ÇöÀç±îÁö ÀĞÀº µ¥ÀÌÅÍ ±æÀÌ
-	while (fgets(buffer, sizeof(buffer), ppopen) != NULL) { //Ãâ·Â ½ºÆ®¸²¿¡¼­ ÇÑ ÁÙ¾¿ ÀĞ±â
-		int bufferlength = strlen(buffer); //ÀĞÀº µ¥ÀÌÅÍ ±æÀÌ
-
-		if (location + bufferlength >= maxDataSize - 1) {//µ¥ÀÌÅÍ°¡ ÃÖ´ëÄ¡º¸´Ù Ä¿Áú°æ¿ì
-			printf("\nData Overflow\n"); //¿À·ù Ãâ·Â
+		if (location + bufferlength >= maxDataSize - 1) {//ë°ì´í„°ê°€ ìµœëŒ€ì¹˜ë³´ë‹¤ ì»¤ì§ˆê²½ìš°
+			printf("\nData Overflow\n"); //ì˜¤ë¥˜ ì¶œë ¥
             break;
         }
 
-		memcpy(jsonData + location, buffer, bufferlength); //ÀĞÀº µ¥ÀÌÅÍ¸¦ jsonData¿¡ º¹»ç
+		memcpy(jsonData + location, buffer, bufferlength); //ì½ì€ ë°ì´í„°ë¥¼ jsonDataì— ë³µì‚¬
 
 
-		location += bufferlength; //ÇöÀç±îÁö ÀĞÀº µ¥ÀÌÅÍ ±æÀÌ °»½Å
+		location += bufferlength; //í˜„ì¬ê¹Œì§€ ì½ì€ ë°ì´í„° ê¸¸ì´ ê°±ì‹ 
     }
 
-	_pclose(ppopen); //Ãâ·Â ½ºÆ®¸² ´İ±â
+	_pclose(ppopen); //ì¶œë ¥ ìŠ¤íŠ¸ë¦¼ ë‹«ê¸°
 
 
-	cJSON* jsonplate = cJSON_Parse(jsonData); //JSON µ¥ÀÌÅÍ ÆÄ½Ì
+	cJSON* jsonplate = cJSON_Parse(jsonData); //JSON ë°ì´í„° íŒŒì‹±
+	cJSON* message = cJSON_GetObjectItemCaseSensitive(jsonplate, "code");
+	if (cJSON_IsNumber(message) && message->valueint == 404) {
+		SetConsoleOutputCP(949); // ì¸ì½”ë”© ë³µêµ¬
+		printf("\n[ERROR] ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ì‹œì¦Œì…ë‹ˆë‹¤. (Error 404)\n\n");
 
-    //¿©±â¼­ Á¤»óÀûÀ¸·Î ·©Å© µ¥ÀÌÅÍ¸¦ ºÒ·¯¿ÔÀ»¶§
+		cJSON_Delete(jsonplate); // ë©”ëª¨ë¦¬ ì •ë¦¬
+		free(jsonData);          // ë©”ëª¨ë¦¬ ì •ë¦¬
+		  //í•œê¸€ ì¶œë ¥ì„ ìœ„í•´ ì¸ì½”ë”© ë³€ê²½
+		return 0;                // í•¨ìˆ˜ ì¢…ë£Œ
+	}
 
-	//API ÀÀ´äÀº ÃÑ 4°³¸¦ ¹İÈ¯ÇÔ, ÀÀ´äÄÚµå, userNum(½±°Ô ¸»ÇÏ¸é UID),´Ğ³×ÀÓ, ·©Å© ¼øÀ§, MMR(RP °³³ä), UserAmblem(À¯Àú ¿¥ºí·³Àº ºó °ªÀ¸·Î¸¸ ¹İÈ¯µÇ¾î¼­ ¹«½Ã)
-	cJSON* rankObj = cJSON_GetObjectItemCaseSensitive(jsonplate, "topRanks");  //topRanks Ç×¸ñ¿¡¼­ ·©Å© µ¥ÀÌÅÍ ¹è¿­
-	if (cJSON_IsArray(rankObj)) { //rankObj°¡ ¹è¿­ÀÎÁö È®ÀÎ
-		printf("ÀÌÅÍ³Î ¸®ÅÏ %d ½ÃÁğ ·©Å·",season); //ÃÑ ·©Å© ¼ö Ãâ·Â
+    //ì—¬ê¸°ì„œ ì •ìƒì ìœ¼ë¡œ ë­í¬ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì™”ì„ë•Œ
+	int totalmmr = 0;
+	//API ì‘ë‹µì€ ì´ 4ê°œë¥¼ ë°˜í™˜í•¨, ì‘ë‹µì½”ë“œ, userNum(ì‰½ê²Œ ë§í•˜ë©´ UID),ë‹‰ë„¤ì„, ë­í¬ ìˆœìœ„, MMR(RP ê°œë…), UserAmblem(ìœ ì € ì— ë¸”ëŸ¼ì€ ë¹ˆ ê°’ìœ¼ë¡œë§Œ ë°˜í™˜ë˜ì–´ì„œ ë¬´ì‹œ)
+	cJSON* rankObj = cJSON_GetObjectItemCaseSensitive(jsonplate, "topRanks");  //topRanks í•­ëª©ì—ì„œ ë­í¬ ë°ì´í„° ë°°ì—´
+	if (cJSON_IsArray(rankObj)) { //rankObjê°€ ë°°ì—´ì¸ì§€ í™•ì¸
+		SetConsoleOutputCP(949); //í•œê¸€ ì¶œë ¥ì„ ìœ„í•´ ì¸ì½”ë”© ë³€ê²½
+		printf("ì´í„°ë„ ë¦¬í„´ %d ì‹œì¦Œ ë­í‚¹\n",season); //ì´ ë­í¬ ìˆ˜ ì¶œë ¥
 
-		for (int i = 0; i < 1001; i++) { //¸ğµç ·©Å· µ¹±â -> api´Â 1001°³±îÁö ¹İÈ¯ÇÔ
-			cJSON* item = cJSON_GetArrayItem(rankObj, i); //i¹øÂ° À¯Àú ÃßÃâ
-            cJSON* rank = cJSON_GetObjectItemCaseSensitive(item, "rank"); //·©Å© ¼øÀ§ ÃßÃâ
-			cJSON* nickname = cJSON_GetObjectItemCaseSensitive(item, "nickname"); //´Ğ³×ÀÓ ÃßÃâ
-			cJSON* mmr = cJSON_GetObjectItemCaseSensitive(item, "mmr"); //MMR ÃßÃâ
+		SetConsoleOutputCP(65001); //í•œê¸€ ì¶œë ¥ì„ ìœ„í•´ ì¸ì½”ë”© ë³€ê²½
+		for (int i = 0; i < 1001; i++) { //ëª¨ë“  ë­í‚¹ ëŒê¸° -> apiëŠ” 1001ê°œê¹Œì§€ ë°˜í™˜í•¨
+			cJSON* item = cJSON_GetArrayItem(rankObj, i); //ië²ˆì§¸ ìœ ì € ì¶”ì¶œ
+            cJSON* rank = cJSON_GetObjectItemCaseSensitive(item, "rank"); //ë­í¬ ìˆœìœ„ ì¶”ì¶œ
+			cJSON* nickname = cJSON_GetObjectItemCaseSensitive(item, "nickname"); //ë‹‰ë„¤ì„ ì¶”ì¶œ
+			cJSON* mmr = cJSON_GetObjectItemCaseSensitive(item, "mmr"); //MMR ì¶”ì¶œ
+			totalmmr += mmr->valueint;
 
-			if (cJSON_IsNumber(rank) && cJSON_IsString(nickname) && cJSON_IsNumber(mmr)) {//°¢ Ç×¸ñ Å¸ÀÔ È®ÀÎ
-				printf("[Rank %d] %-20s (MMR: %d)\n", rank->valueint, nickname->valuestring, mmr->valueint); //·©Å© Á¤º¸ Ãâ·Â
+			if (cJSON_IsNumber(rank) && cJSON_IsString(nickname) && cJSON_IsNumber(mmr)) {//ê° í•­ëª© íƒ€ì… í™•ì¸
+				printf("[Rank %d] %-20s (MMR: %d)\n", rank->valueint, nickname->valuestring, mmr->valueint); //ë­í¬ ì •ë³´ ì¶œë ¥
             }
+
         }
+		printf("\nAverage MMR of Top 1001 players: %.2f\n", totalmmr / 1001.0); //ìƒìœ„ 1001ëª…ì˜ í‰ê·  MMR ì¶œë ¥
     }
 
-	cJSON_Delete(jsonplate); //ÆÄ½ÌµÈ JSON °´Ã¼ ¸Ş¸ğ¸® ÇØÁ¦
-	free(jsonData); //ÇÒ´çµÈ ¸Ş¸ğ¸® ÇØÁ¦
+	cJSON_Delete(jsonplate); //íŒŒì‹±ëœ JSON ê°ì²´ ë©”ëª¨ë¦¬ í•´ì œ
+	free(jsonData); //í• ë‹¹ëœ ë©”ëª¨ë¦¬ í•´ì œ
 
 
 	printf("\n");
-	SetConsoleOutputCP(949); //¿ø·¡ ÀÎÄÚµùÀ¸·Î º¹±¸
+	SetConsoleOutputCP(949); //ì›ë˜ ì¸ì½”ë”©ìœ¼ë¡œ ë³µêµ¬
 
     return 0;
 }

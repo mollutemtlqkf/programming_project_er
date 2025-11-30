@@ -125,13 +125,20 @@
   <ItemGroup>
     <ClCompile Include="cJSON.c" />
     <ClCompile Include="etc.c" />
+    <ClCompile Include="getuser.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="multipleseason.c" />
     <ClCompile Include="OneSeasonViewer.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cJSON.h" />
     <ClInclude Include="etc.h" />
+    <ClInclude Include="getuser.h" />
+    <ClInclude Include="multipleseason.h" />
     <ClInclude Include="OneSeasonViewer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="subjects.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
